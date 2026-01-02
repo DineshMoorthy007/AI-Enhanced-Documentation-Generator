@@ -1,0 +1,9 @@
+{
+  "ignored_folders": [
+    "node_modules",
+    "dist",
+    "build",
+    ".git",
+    "coverage"
+  ]
+}
