@@ -1,0 +1,48 @@
+# =====================
+# Python
+# =====================
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+
+# =====================
+# FastAPI / Logs
+# =====================
+*.log
+
+# =====================
+# Node / React
+# =====================
+node_modules/
+dist/
+build/
+.vite/
+
+# =====================
+# OS / Editor
+# =====================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# =====================
+# AI / Secrets
+# =====================
+.env.local
+.env.production
+.env.development
+
+# =====================
+# Coverage / Tests
+# =====================
+.coverage
+htmlcov/
+
+# =====================
+# GitHub
+# =====================
+*.swp
