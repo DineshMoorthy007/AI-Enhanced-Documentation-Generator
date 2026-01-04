@@ -89,3 +89,36 @@ def build_readme(repo_name: str, docs: list) -> str:
     )
 
     return "\n".join(sections)
+
+def build_single_file_readme(
+    filename: str,
+    documentation: str,
+    functions: list,
+    classes: list,
+) -> str:
+    sections = []
+
+    sections.append(f"# {filename}\n")
+
+    sections.append(
+        "## 📄 File Overview\n"
+        f"{documentation.strip()}\n"
+    )
+
+    if functions:
+        sections.append("## 🔧 Functions\n")
+        for fn in functions:
+            sections.append(f"- `{fn}`\n")
+
+    if classes:
+        sections.append("\n## 🧱 Classes\n")
+        for cls in classes:
+            sections.append(f"- `{cls}`\n")
+
+    sections.append(
+        "\n## 📝 Notes\n"
+        "This documentation was generated automatically to explain the purpose "
+        "and responsibilities of this source file.\n"
+    )
+
+    return "\n".join(sections)

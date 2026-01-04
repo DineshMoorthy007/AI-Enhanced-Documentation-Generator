@@ -1,9 +1,16 @@
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import Response
+from fastapi import UploadFile, File, Form
+from typing import Optional
 
 from models.schemas import RepoRequest
 from services.doc_service import generate_readme_for_repo
 import requests
+
+from models.schemas import FileDocRequest
+from services.parser_service import extract_functions_and_classes
+from services.ai_service import generate_file_documentation
+from services.readme_service import build_single_file_readme
 
 router = APIRouter()
 
@@ -57,4 +64,92 @@ def download_readme(data: RepoRequest):
         headers={
             "Content-Disposition": "attachment; filename=README.md"
         }
+    )
+
+@router.post("/generate-file-doc")
+def generate_file_doc(data: FileDocRequest):
+    filename = data.filename
+    code = data.code
+
+    if not code.strip():
+        raise HTTPException(status_code=400, detail="Code content is empty")
+
+    # Reuse your existing parser
+    parsed = extract_functions_and_classes(code)
+
+    # Reuse your existing AI logic
+    documentation = generate_file_documentation(
+        file_path=filename,
+        functions=parsed["functions"],
+        classes=parsed["classes"],
+        code_snippet=code[:1500],  # safety limit
+    )
+
+    return {
+        "file": filename,
+        "functions": parsed["functions"],
+        "classes": parsed["classes"],
+        "documentation": documentation,
+    }
+
+@router.post("/generate-file-doc/upload")
+async def generate_file_doc_upload(
+    file: UploadFile = File(...),
+    language: Optional[str] = Form(None),):
+
+    filename = file.filename
+
+    # Basic validation
+    if not filename:
+        raise HTTPException(status_code=400, detail="No file uploaded")
+
+    # Read file content
+    code_bytes = await file.read()
+    code = code_bytes.decode("utf-8", errors="ignore")
+
+    if not code.strip():
+        raise HTTPException(status_code=400, detail="Uploaded file is empty")
+
+    # Reuse existing parser
+    parsed = extract_functions_and_classes(code)
+
+    # Reuse AI documentation generator
+    documentation = generate_file_documentation(
+        file_path=filename,
+        functions=parsed["functions"],
+        classes=parsed["classes"],
+        code_snippet=code[:1500],  # safety limit
+    )
+
+    return {
+        "file": filename,
+        "functions": parsed["functions"],
+        "classes": parsed["classes"],
+        "documentation": documentation,
+    }
+
+@router.post("/download-single-file-readme")
+def download_single_file_readme(data: FileDocRequest):
+    parsed = extract_functions_and_classes(data.code)
+
+    documentation = generate_file_documentation(
+        file_path=data.filename,
+        functions=parsed["functions"],
+        classes=parsed["classes"],
+        code_snippet=data.code[:1500],
+    )
+
+    readme = build_single_file_readme(
+        filename=data.filename,
+        documentation=documentation,
+        functions=parsed["functions"],
+        classes=parsed["classes"],
+    )
+
+    return Response(
+        content=readme,
+        media_type="text/markdown",
+        headers={
+            "Content-Disposition": "attachment; filename=README.md"
+        },
     )
