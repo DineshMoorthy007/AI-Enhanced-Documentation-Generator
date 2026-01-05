@@ -3,6 +3,20 @@
 An AI-powered tool that automatically generates high-quality technical documentation from GitHub repositories or individual source files.  
 Built to help developers understand, document, and share code efficiently using structured AI prompts and code analysis.
 
+![Python](https://img.shields.io/badge/Python-3.9+-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-Backend-green)
+![React](https://img.shields.io/badge/React-Frontend-blue)
+![License](https://img.shields.io/badge/License-MIT-yellow)
+
+---
+
+## ⭐ Why This Project?
+
+- Solves a real developer pain point: documentation
+- Combines AST-based parsing with AI explanations
+- Supports both repository-level and single-file workflows
+- Designed with clean backend architecture and UX-focused frontend
+
 ---
 
 ## 🚀 Features
